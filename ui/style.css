@@ -1,0 +1,197 @@
+/* prometheus/ui/style.css
+
+/**
+ * styles for the Prometheus UI.
+ * this file defines the visual appearance of the main application layout,
+ * control panel, 3d scene container, form elements, and feedback indicators.
+ */
+ body {
+    margin: 0;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 13px;
+    display: flex;
+    background-color: #222;
+    color: #e0e0e0;
+}
+
+#scene-container { /* container for the 3d visualization */
+    flex-grow: 1;
+    height: 100vh;
+    position: relative;
+}
+
+#loading-indicator { /* displayed while 3d scene is initializing */
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    color: white; font-size: 1.5em; display: block;
+    background-color: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 5px;
+}
+
+#control-panel { /* sidebar for simulation controls and feedback */
+    width: 340px;
+    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 12px;
+    box-sizing: border-box;
+    background-color: #2a2a2e;
+    border-left: 1px solid #444;
+    color: #ccc;
+}
+
+h3, h4 { /* heading styles */
+    margin-top: 10px;
+    margin-bottom: 6px;
+    color: #4af;
+    border-bottom: 1px solid #4a4a4f;
+    padding-bottom: 3px;
+}
+h3 { font-size: 1.2em; margin-top: 0; }
+h4 { font-size: 1.05em; }
+
+hr { /* horizontal rule style */
+    margin: 10px 0;
+    border: 0;
+    border-top: 1px solid #4a4a4f;
+}
+
+button { /* general button styling */
+    margin: 3px;
+    padding: 5px 10px;
+    background-color: #505055;
+    color: #eee;
+    border: 1px solid #777;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    font-size: 0.95em;
+}
+button:hover:not(:disabled) {
+    background-color: #65656a;
+    border-color: #888;
+}
+button:active:not(:disabled) {
+    background-color: #404045;
+}
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#run-button { background-color: #181; border-color: #1a1;} /* specific style for the run/pause button */
+#run-button:hover:not(:disabled) { background-color: #2a2; }
+#run-button.paused { background-color: #c80; border-color: #ea0;} /* style when simulation is paused */
+#run-button.paused:hover:not(:disabled) { background-color: #ea0; }
+#restart-button { background-color: #a22; border-color: #c33;} /* specific style for the restart button */
+#restart-button:hover:not(:disabled) { background-color: #c33;}
+
+
+.control-group { /* groups related control buttons */
+    margin-bottom: 8px;
+    text-align: center;
+}
+.control-group button { margin-right: 5px;}
+
+.inline-controls label, /* for controls that appear on the same line */
+.inline-controls select {
+     margin-right: 8px;
+     vertical-align: middle;
+}
+.inline-controls input[type="checkbox"] {
+    vertical_align: middle;
+    margin-right: 3px;
+    position: relative;
+    top: -1px;
+}
+select { /* general select dropdown styling */
+    background-color: #404045;
+    color: #eee;
+    border: 1px solid #666;
+    padding: 3px 5px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.model-selection-group { /* layout for model selection (label + select) */
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 4px;
+}
+.model-selection-group label {
+    text-align: right;
+    font-size: 0.9em;
+    color: #bbb;
+}
+.model-selection-group select {
+    width: 100%;
+}
+
+
+.slider-container { /* layout for parameter sliders (label + slider + value) */
+    display: grid;
+    grid-template-columns: minmax(85px, 1fr) 2fr minmax(55px, 1fr);
+    align-items: center;
+    margin-bottom: 3px;
+    gap: 5px;
+}
+
+.slider-container label {
+    text-align: right;
+    font-size: 0.9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #bbb;
+}
+.slider-container label:hover { cursor: default; }
+
+.slider-container input[type="range"] { /* styling for range input sliders */
+    width: 100%; height: 6px; margin: 0; cursor: pointer;
+    appearance: none; background: #555; outline: none; border-radius: 3px;
+}
+.slider-container input[type="range"]::-webkit-slider-thumb { /* slider thumb for webkit browsers */
+  appearance: none; width: 13px; height: 13px; background: #4af;
+  cursor: pointer; border-radius: 50%;
+}
+.slider-container input[type="range"]::-moz-range-thumb { /* slider thumb for firefox */
+  width: 13px; height: 13px; background: #4af; cursor: pointer;
+  border-radius: 50%; border: none;
+}
+
+#graph-controls-container { /* container for graph toggle checkboxes */
+    margin-bottom: 10px;
+}
+
+#graph-controls-container label { /* styling for graph checkbox labels */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+#graph-controls-container input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+
+#pdf-feedback-message { /* style for the pdf generation feedback message */
+    font-size: 0.85em;
+    margin-left: 10px;
+    color: #bbb;
+    vertical-align: middle;
+}
+
+
+.slider-container span { /* displays the current value of a slider */
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95em; text-align: left; min-width: 55px; color: #eee;
+}
+
+#feedback-container p { /* paragraph styling within the feedback area */
+    margin: 3px 0; font-size: 0.95em; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#feedback-container span { font-weight: bold; font-family: 'Courier New', monospace; color: #fff; } /* emphasized text in feedback */
+
+#connection-status.connected { color: limegreen; } /* color for 'connected' status */
+#connection-status.disconnected { color: #f66; } /* color for 'disconnected' status */
+#connection-status.connecting { color: orange; } /* color for 'connecting' status */

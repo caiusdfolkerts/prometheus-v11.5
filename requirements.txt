@@ -1,0 +1,9 @@
+numpy
+Flask
+Flask-SocketIO
+taichi
+torch
+numba
+scipy
+psutil
+matplotlib

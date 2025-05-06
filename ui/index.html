@@ -1,0 +1,113 @@
+<!-- prometheus/ui/index.html -->
+<!--This HTML code defines the user interface for the frontend of prometheus  using Three.js.
+    This includes a 3D scene container for visualization, a sidebar control panel for simulation parameters,
+    live data feedback, and graph generation tools.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- sets viewport for responsiveness -->
+    <title>Star Formation - Prometheus</title> <!-- page title -->
+    <link rel="stylesheet" href="style.css"> <!-- links to external css file -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>"> <!-- sets page favicon -->
+</head>
+<body>
+    <!-- main container for the 3d visualization -->
+    <div id="scene-container">
+        <!-- displays a loading message during initialization -->
+        <div id="loading-indicator" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.5em; display: none; z-index: 10;">Initializing Simulation...</div>
+    </div>
+
+    <!-- sidebar panel for simulation controls and information -->
+    <div id="control-panel">
+        <h3>Star Formation Sim</h3>
+        <p>Prometheus v<span id="sim-version">?.?</span> | Three.js UI</p> <!-- simulation version and UI framework -->
+        <hr>
+
+        <h4>--- Controls ---</h4> <!-- section header for primary simulation controls -->
+        <div class="control-group">
+            <button id="run-button">Run</button> <!-- button to start/pause the simulation -->
+            <button id="center-view-button">Center View</button> <!-- button to reset camera to center -->
+        </div>
+        <div class="control-group">
+             <button id="restart-button">Apply & Restart</button> <!-- button to apply new parameters and restart -->
+        </div>
+        <hr>
+
+         <h4>--- Model Selection ---</h4> <!-- section for selecting simulation physics models -->
+         <div class="model-selection-group">
+             <label for="gravity-select">Gravity:</label>
+             <select id="gravity-select" data-model-type="gravity"></select> <!-- dropdown for gravity model -->
+         </div>
+         <div class="model-selection-group">
+             <label for="sph-select">SPH:</label>
+             <select id="sph-select" data-model-type="sph"></select> <!-- dropdown for SPH model -->
+         </div>
+         <div class="model-selection-group">
+              <label for="thermo-select">Thermo:</label>
+              <select id="thermo-select" data-model-type="thermo"></select> <!-- dropdown for thermodynamics model -->
+          </div>
+         <div class="model-selection-group">
+             <label for="color-select">Color:</label>
+             <select id="color-select" data-model-type="color"></select> <!-- dropdown for particle coloring scheme -->
+         </div>
+         <div class="model-selection-group"> <!-- note: there might be a typo here, 'class.model-selection-group' in original -->
+             <label for="integrator-select">Integrator:</label>
+             <select id="integrator-select" data-model-type="integrator"></select> <!-- dropdown for integration method -->
+         </div>
+        <hr>
+
+        <h4>--- Live Update Params ---</h4> <!-- section for parameters adjustable during runtime -->
+        <div id="live-params-container">
+            <!-- live sliders will be populated here by js -->
+        </div>
+        <hr>
+        <h4>--- Restart Required Params ---</h4> <!-- section for parameters requiring simulation restart -->
+        <div id="restart-params-container">
+            <!-- restart-required sliders will be populated here by js -->
+        </div>
+        <hr>
+
+        <h4>--- Thermo Processes (Live update) ---</h4> <!-- section for toggling thermal processes -->
+        <div class="control-group inline-controls">
+            <label><input type="checkbox" id="rad-press-toggle">RadPressure</label> | <!-- toggle for radiation pressure -->
+            <label><input type="checkbox" id="cooling-toggle">Cooling</label> | <!-- toggle for cooling processes -->
+            <label><input type="checkbox" id="fusion-toggle">Fusion</label> <!-- toggle for nuclear fusion -->
+        </div>
+        <hr>
+
+        <h4>--- Graph Generation ---</h4> <!-- section for generating plots/graphs -->
+        <div id="graph-controls-container">
+            <p style="text-align: center; color: #888;">(Loading Graph Options...)</p> <!-- placeholder for graph options -->
+        </div>
+        <div class="control-group">
+            <button id="generate-pdf-button">Produce PDF</button> <!-- button to generate a pdf report -->
+            <span id="pdf-feedback-message" style="font-size: 0.85em; margin-left: 10px; color: #bbb;"></span> <!-- feedback message for pdf generation -->
+        </div>
+        <hr>
+
+        <h4>--- Live Feedback ---</h4> <!-- section for displaying real-time simulation data -->
+        <div id="feedback-container">
+            <p>Server: <span id="connection-status" class="connecting">Connecting...</span></p> <!-- server connection status -->
+            <p><span id="status-text">Initializing...</span></p> <!-- general simulation status text -->
+            <p>T=<span id="time-text">0.000</span> | Steps=<span id="steps-text">0</span> | N=<span id="n-particles-text">?</span></p> <!-- sim time, steps, and particle count -->
+            <p>Avg KE: <span id="ke-text">0.0e+00</span> | Vel: <span id="vel-text">0.00</span></p> <!-- average kinetic energy and velocity -->
+            <p>Core: <span id="core-text">?</span> | MaxRho: <span id="density-text">0.0e+00</span> | MaxT: <span id="temp-text">0.0e+00</span></p> <!-- core status, max density, and max temperature -->
+            <p>Cool/m: <span id="cool-text">0.0e+00</span> | Fus/m: <span id="fusion-text">0.0e+00</span></p> <!-- cooling and fusion rates per mass -->
+        </div>
+         <hr>
+         <p style="font-size: 0.8em; color: #777; text-align: center;">© Caius Folkerts 6th May 2025</p> <!-- copyright information -->
+    </div>
+
+    <!-- import map for javascript modules, allows using bare specifiers like "three" -->
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+    </script>
+    <!-- includes socket.io client library for real-time communication -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <!-- main javascript application file, loaded as a module -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>
