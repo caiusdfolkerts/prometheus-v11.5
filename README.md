@@ -1,6 +1,6 @@
 # Prometheus: Simulating Stellar Formation
 
-Version: 0.4.1 
+Version: 11.5.1
 
 6th May 2025
 
